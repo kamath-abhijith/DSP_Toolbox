@@ -6,18 +6,32 @@ from matplotlib import style
 
 import mysignals as sig
 
-def signal_convolution(input_signal,filter_response):
-	N = len(input_signal)
-	M = len(filter_response)
-	output_signal = np.zeros(N+M)
+def linear_convolution(x,y):
+	"""
+	Computes the linear convolution
+	of two discrete-time signals
+	
+	INPUT:  Input signals, x,y
+	OUTPUT: Output signals, out
 
-	for x in range(N):
-		for y in range(M):
-			output_signal[x+y] = output_signal[x+y] + input_signal[x]*filter_response[y]
+	Author: Abijith J. Kamath
+	kamath-abhijith.github.io
+	"""
+	
+	# Retrieve dimensions
+	N = len(x)
+	M = len(y)
+	out = np.zeros(N+M)
 
-	output_signal = output_signal[int(np.floor(M/2)):N+int(np.floor(M/2))]
+	# Convolution sum
+	for i in range(N):
+		for j in range(M):
+			out[i+j] = out[i+j] + x[i]*y[j]
 
-	return output_signal
+	# Truncate to mode='same'
+	out = out[int(np.floor(M/2)):N+int(np.floor(M/2))]
+
+	return out
 
 ## Load signal
 input_signal = sig.InputSignal_1kHz_15kHz
@@ -26,7 +40,7 @@ filter_response = sig.Impulse_response
 ## Compute convolution
 output_signal = signal.convolve(input_signal,filter_response,mode='same')
 
-output_signal_v2 = signal_convolution(input_signal,filter_response)
+output_signal_v2 = linear_convolution(input_signal,filter_response)
 
 ## Plots
 style.use('ggplot')
